@@ -1,11 +1,11 @@
-const router = require("express").Router();
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const router = require('express').Router();
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const Users = require("../users/users-model.js");
+const Users = require('../users/users-model.js');
 
 // for endpoints beginning with /api/auth
-router.post("/register", (req, res) => {
+router.post('/register', (req, res) => {
     let user = req.body;
     const hash = bcrypt.hashSync(user.password, 10); // 2 ^ n
     user.password = hash;
@@ -19,15 +19,15 @@ router.post("/register", (req, res) => {
         });
 });
 
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
     let { username, password } = req.body;
 
     Users.findBy({ username })
-    first()
+        .first()
         .then(user => {
             if (user && bcrypt.compareSync(password, user.password)) {
                 // sign token
-                const token = signToken(user); // new line
+                const token = signToken(user);
 
                 // send the token
                 res.status(200).json({
@@ -47,7 +47,7 @@ router.post("/login", (req, res) => {
 function signToken(user) {
     const payload = {
         username: user.username,
-        role: "student", // this will come from the database users.role
+        department: user.department,
     };
 
     const secret = process.env.JWT_SECRET || "is it secret, is it safe?";
